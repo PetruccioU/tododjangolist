@@ -27,12 +27,6 @@ def deleteTodoView(request, i):
     y.delete()
     return redirect('home',permanent = True)
 
-def getYourItemDone(request, i):
-    y = TodoListItem.content.get(id=i)
-    x = request.POST[y]
-    DoneListItem.objects.create(x)
-    y.delete()
-    return redirect('home',permanent = True)
 
 def pageNotFind(request,exception):
     return HttpResponseNotFound('<h1> Sorry, there is no such page on the website</h1>')
