@@ -13,9 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include,path
 from todoapp.views import pageNotFond
+from todoproject import settings
 
 #!!!To make import mark 'todoproject' folder as a "Source Root"!!!
 
@@ -23,6 +25,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('todoapp.urls')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_rood=settings.MEDIA_ROOT)
 
 handler404 = pageNotFond
 #handler 500 server error, 404 access denied, 400 impossible to handle the request
