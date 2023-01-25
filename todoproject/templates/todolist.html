@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>todoapp</title>
+</head>
+<body>
+    <h1>My To-Do list:</h1>
+
+    <form action="/addTodoView/" method = "post">{% csrf_token %}
+        <input type="text" name="content">
+        <input type="submit" value="Add Todo Item">
+    </form>
+
+    <ul>
+    {% for i in all_items %}
+    <li>{{i.content}}
+        <form action="/deleteTodoItem/{{i.id}}/" method = "post">{% csrf_token %}
+            <input type="submit" value="Delete">
+        </form>
+        <form action="/getYourItemDone/{{i.id}}/" method = "post">{% csrf_token %}
+            <input type="submit" value="Done">
+        </form>
+    </li>
+    {% endfor %}
+
+    </ul>
+
+    <h2>My Done list:</h2>
+    <ul>
+    {% for j in done_items %}
+    <li>{{j.content}}
+
+    </li>
+    {% endfor %}
+
+    </ul>
+</body>
+</html>
