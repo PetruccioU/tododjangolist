@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include,path
-from todoapp.views import pageNotFind
+from todoapp.views import pageNotFond
 
 #!!!To make import mark 'todoproject' folder as a "Source Root"!!!
 
@@ -24,7 +24,7 @@ urlpatterns = [
     path('', include('todoapp.urls')),
 ]
 
-handler404 = pageNotFind
+handler404 = pageNotFond
 #handler 500 server error, 404 access denied, 400 impossible to handle the request
 
 

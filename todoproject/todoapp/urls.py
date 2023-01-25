@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, re_path
-from .views import todoappView, addTodoView, deleteTodoView, getYourItemDone, DoneListView, archive
+from .views import todoappView, addTodoView, deleteTodoView, DoneListView, archive
 
 urlpatterns = [
 

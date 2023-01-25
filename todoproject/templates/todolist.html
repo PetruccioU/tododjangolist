@@ -18,9 +18,7 @@
         <form action="/deleteTodoItem/{{i.id}}/" method = "post">{% csrf_token %}
             <input type="submit" value="Delete">
         </form>
-        <form action="/getYourItemDone/{{i.id}}/" method = "post">{% csrf_token %}
-            <input type="submit" value="Done">
-        </form>
+
     </li>
     {% endfor %}
 

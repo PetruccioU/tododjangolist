@@ -1,7 +1,7 @@
 
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse, Http404
 from django.shortcuts import render, redirect
-from .models import TodoListItem, DoneListItem
+from .models import TodoListItem
 
 #def todoappView(request):
 #    return render(request, 'todolist.html')
@@ -28,7 +28,7 @@ def deleteTodoView(request, i):
     return redirect('home',permanent = True)
 
 
-def pageNotFind(request,exception):
+def pageNotFond(request,exception):
     return HttpResponseNotFound('<h1> Sorry, there is no such page on the website</h1>')
 
 def archive(request,year):
