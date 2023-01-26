@@ -3,18 +3,12 @@ from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse
 from django.shortcuts import render, redirect
 from .models import TodoListItem
 
-#def todoappView(request):
-#    return render(request, 'todolist.html')
-
 def todoappView(request):
-    all_todo_items = TodoListItem.objects.all()
+    all_todo_items = TodoListItem.objects.filter(is_done=0)
+    all_done_items = TodoListItem.objects.filter(is_done =1 )
     return render(request, 'todolist.html',
-    {'all_items':all_todo_items})
+    {'all_items':all_todo_items,'all_done':all_done_items})
 # Create your views here.
-
-def DoneListView(request):
-    all_done_items = DoneListItem.objects.all()
-    return render(request, 'todolist.html', {'done_items':all_done_items})
 
 def addTodoView(request):
     x = request.POST['content']
@@ -26,6 +20,12 @@ def deleteTodoView(request, i):
     y = TodoListItem.objects.get(id= i)
     y.delete()
     return redirect('home',permanent = True)
+
+def getYourTodoDone(request, i):
+    y = TodoListItem.objects.get(id=i)
+    y.is_done=1
+    y.save(update_fields=["is_done"])
+    return redirect('home', permanent=True)
 
 
 def pageNotFond(request,exception):

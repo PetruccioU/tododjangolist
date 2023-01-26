@@ -18,6 +18,9 @@
         <form action="/deleteTodoItem/{{i.id}}/" method = "post">{% csrf_token %}
             <input type="submit" value="Delete">
         </form>
+        <form action="/YourTodoDone/{{i.id}}/" method = "post">{% csrf_token %}
+            <input type="submit" value="Done">
+        </form>
 
     </li>
     {% endfor %}
@@ -25,9 +28,13 @@
     </ul>
 
     <h2>My Done list:</h2>
+
     <ul>
-    {% for j in done_items %}
+    {% for j in all_done %}
     <li>{{j.content}}
+        <form action="/deleteTodoItem/{{j.id}}/" method = "post">{% csrf_token %}
+            <input type="submit" value="Delete">
+        </form>
 
     </li>
     {% endfor %}

@@ -2,6 +2,7 @@ import datetime
 
 from django.db import models
 
+# python manage.py sqlmigrate todoapp 0002
 class TodoListItem(models.Model):
     title = models.CharField(max_length=255)
     content = models.TextField()
