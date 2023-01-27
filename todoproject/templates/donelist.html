@@ -1,0 +1,20 @@
+{% extends 'base2.html' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+<h5>My Done list:</h5>
+    <ul>
+    {% for j in all_done %}
+    <li>
+        <h6>{{j.title}}</h6>
+        <p>{{j.content}}</p>
+        <form action="/deleteTodoItem/{{j.id}}/" method = "post">{% csrf_token %}
+            <input type="submit" value="Delete">
+        </form>
+    </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

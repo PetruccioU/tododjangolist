@@ -5,14 +5,19 @@ from .models import TodoListItem
 
 def todoappView(request):
     all_todo_items = TodoListItem.objects.filter(is_done=0)
-    all_done_items = TodoListItem.objects.filter(is_done =1 )
     return render(request, 'todolist.html',
-    {'all_items':all_todo_items,'all_done':all_done_items})
+    {'all_items':all_todo_items})
 # Create your views here.
 
+def DoneList(request):
+    all_done_items = TodoListItem.objects.filter(is_done=1)
+    return render(request, 'donelist.html',
+    {'all_done': all_done_items})
+
 def addTodoView(request):
-    x = request.POST['content']
-    new_item = TodoListItem(content = x)
+    x = request.POST['title']
+    y = request.POST['content']
+    new_item = TodoListItem(title = x, content = y)
     new_item.save()
     return redirect('home',permanent = True)
 
