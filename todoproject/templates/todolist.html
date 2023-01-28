@@ -7,15 +7,7 @@
 {% block content %}
 
     <hr>
-    <form action="/addTodoView/" method = "post">{% csrf_token %}
-        <h2>Make a new task:</h2>
-        <input type="text" name="title">
-        <h3>Specify the task:</h3>
-        <input type="text" name="content">
-        <input type="submit" value="Submit">
-    </form>
-    <hr>
-    <h1>My To-Do list:</h1>
+    <h1>Current tasks:</h1>
     <hr>
     <ul>
     {% for i in all_items %}
@@ -23,15 +15,17 @@
         <h4>{{i.title}}</h4>
         <p>{{i.content}}</p>
         <hr>
-        <form action="/deleteTodoItem/{{i.id}}/" method = "post">{% csrf_token %}
-            <input type="submit" value="Delete">
-        </form>
-        <form action="/YourTodoDone/{{i.id}}/" method = "post">{% csrf_token %}
-            <input type="submit" value="Done">
-        </form>
+          <form style="float:right;" action="/deleteTodoItem/{{i.id}}/" method = "post">{% csrf_token %}
+              <input type="submit" value="Delete">
+          </form>
+          <form style="float:right;" action="/YourTodoDone/{{i.id}}/" method = "post">{% csrf_token %}
+              <input type="submit" value="Done">
+          </form>
+        <p>Change status of task:</p>
         <hr>
     </li>
-    {% endfor %}
+    <hr>
+        {% endfor %}
     </ul>
     <hr>
 

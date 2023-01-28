@@ -1,0 +1,19 @@
+{% extends 'base2.html' %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block content %}
+
+    <hr>
+    <form action="/addTodoView/" method = "post">{% csrf_token %}
+        <h2>Create a new task:</h2>
+        <input type="text" name="title">
+        <h3>Specify the task:</h3>
+        <input type="text" name="content">
+        <input type="submit" value="Submit">
+    </form>
+    <hr>
+
+{% endblock %}

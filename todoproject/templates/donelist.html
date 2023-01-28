@@ -5,15 +5,18 @@
 {% endblock %}
 
 {% block content %}
-<h5>My Done list:</h5>
+<hr>
+<h1>Great job, you have finished these tasks:</h1>
     <ul>
     {% for j in all_done %}
     <li>
-        <h6>{{j.title}}</h6>
+        <hr>
+        <h2>{{j.title}}</h2>
         <p>{{j.content}}</p>
         <form action="/deleteTodoItem/{{j.id}}/" method = "post">{% csrf_token %}
             <input type="submit" value="Delete">
         </form>
+        <hr>
     </li>
     {% endfor %}
     </ul>

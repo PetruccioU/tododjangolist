@@ -19,7 +19,16 @@ def addTodoView(request):
     y = request.POST['content']
     new_item = TodoListItem(title = x, content = y)
     new_item.save()
-    return redirect('home',permanent = True)
+    return redirect('home', permanent = True)
+
+def showFormForNewTask(request):
+    return render(request, 'add.html')
+
+def AboutForm(request):
+    return render(request, 'about.html')
+
+def MotivationForm(request):
+    return render(request, 'motivational.html')
 
 def deleteTodoView(request, i):
     y = TodoListItem.objects.get(id= i)
