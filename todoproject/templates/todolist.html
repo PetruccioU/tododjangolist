@@ -1,4 +1,4 @@
-{% extends 'base2.html' %}
+{% extends 'base4.html' %}
 
 {% block title %}
 
@@ -6,27 +6,29 @@
 
 {% block content %}
 
+<hr>
+<h1>All tasks:</h1>
+<hr>
+<ul>
+{% for i in all_items %}
+<li>
+  <div class="block" style="padding-top: 10px;">
+    <h4>{{i.title}}</h4>
+    <p>{{i.content}}</p>
     <hr>
-    <h1>Current tasks:</h1>
+      <form style="float:right;" action="/deleteTodoItem/{{i.id}}/" method = "post">{% csrf_token %}
+          <input type="submit" value="Delete">
+      </form>
+      <form style="float:right;" action="/YourTodoDone/{{i.id}}/" method = "post">{% csrf_token %}
+          <input type="submit" value="Done">
+      </form>
+    <p>Change status of task:</p>
     <hr>
-    <ul>
-    {% for i in all_items %}
-    <li>
-        <h4>{{i.title}}</h4>
-        <p>{{i.content}}</p>
-        <hr>
-          <form style="float:right;" action="/deleteTodoItem/{{i.id}}/" method = "post">{% csrf_token %}
-              <input type="submit" value="Delete">
-          </form>
-          <form style="float:right;" action="/YourTodoDone/{{i.id}}/" method = "post">{% csrf_token %}
-              <input type="submit" value="Done">
-          </form>
-        <p>Change status of task:</p>
-        <hr>
-    </li>
-    <hr>
-        {% endfor %}
-    </ul>
-    <hr>
+  </div>
+</li>
+<hr>
+    {% endfor %}
+</ul>
+<hr>
 
 {% endblock %}

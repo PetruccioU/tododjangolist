@@ -1,4 +1,4 @@
-{% extends 'base2.html' %}
+{% extends 'base4.html' %}
 
 {% block title %}
 
@@ -12,6 +12,14 @@
         <input type="text" name="title">
         <h3>Specify the task:</h3>
         <input type="text" name="content">
+        <h3>Specify the category:</h3>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="#">Technical problem</a></li>
+            <li><a class="dropdown-item" href="#">Management task</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">HR task</a></li>
+
+        </ul>
         <input type="submit" value="Submit">
     </form>
     <hr>
