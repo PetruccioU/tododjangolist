@@ -1,4 +1,4 @@
-{% extends 'base4.html' %}
+{% extends 'base5.html' %}
 
 {% block title %}
 
@@ -8,7 +8,7 @@
 <hr>
 <h1>Great job, you have finished these tasks:</h1>
     <ul>
-    {% for j in all_done %}
+    {% for j in posts %}
     <li>
         <hr>
         <h2>{{j.title}}</h2>

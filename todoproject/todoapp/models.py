@@ -26,12 +26,15 @@ class TodoListItem(models.Model):
         ordering = ['title']
 
 class Category(models.Model):
-    name = models.CharField(max_length=100, db_index=True, verbose_name='Category of task:')
+    name = models.CharField(max_length=100, db_index=True, verbose_name='Categorys:')
 
     def __str__(self):
         return self.name
 
     class Meta:
         verbose_name='Category of task:'
-        verbose_name_plural ='Category of tasks:'
+        verbose_name_plural ='Categorys of tasks:'
         ordering = ['name']
+
+    def get_absolute_url(self):
+        return reverse('category', kwargs={'cat_id': self.pk})
