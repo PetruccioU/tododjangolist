@@ -24,8 +24,17 @@
 	{{p.content|linebreaks|truncatewords:50}}
 	{% endautoescape %}
 			<div class="clear"></div>
-			<p class="link-read-post"><a href="{{ p.get_absolute_url }}">Read</a></p>
+			<p class="link-read-post"><a href="{{ p.get_absolute_url }}">Read More</a></p>
 			</li>
+	<hr>
+      <form style="float:right;" action="/deleteTodoItem/{{i.id}}/" method = "post">{% csrf_token %}
+          <input type="submit" value="Delete">
+      </form>
+      <form style="float:right;" action="/YourTodoDone/{{i.id}}/" method = "post">{% csrf_token %}
+          <input type="submit" value="Done">
+      </form>
+    <p>Change status of task:</p>
+    <hr>
 	{% endfor %}
 </ul>
 

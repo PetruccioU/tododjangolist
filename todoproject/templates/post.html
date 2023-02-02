@@ -10,16 +10,26 @@
 
 <hr>
 <ul class="list-articles">
-	{% for p in posts %}
-			<li><div class="article-panel">
-	<p class="first">Category: {{p.cat}}</p>
-	<p class="last">Date: {{p.update_date|date:"d-m-Y H:i:s"}}</p>
-</div>
-
-	<h2>{{p.title}}</h2>
-	{{p.content}}
-
-	{% endfor %}
+  <li>
+    <div class="article-panel">
+      <p class="first">Category: {{cat_for_title}}</p>
+      <p class="last">Date: {{post.update_date|date:"d-m-Y H:i:s"}}</p>
+    </div>
+  </li>
+  {% if post.photo %}
+  <p><img class="img-article-left" src="{{post.photo.url}}"></p>
+  {% endif %}
+  <h2>{{post.title}}</h2>
+  {{post.content|linebreaks}}
+  <hr>
+  <form style="float:right;" action="/deleteTodoItem/{{i.id}}/" method = "post">{% csrf_token %}
+    <input type="submit" value="Delete">
+  </form>
+  <form style="float:right;" action="/YourTodoDone/{{i.id}}/" method = "post">{% csrf_token %}
+    <input type="submit" value="Done">
+  </form>
+  <p>Change status of task:</p>
+  <hr>
 </ul>
 
 <!--<ul>

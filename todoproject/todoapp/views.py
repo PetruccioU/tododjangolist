@@ -2,8 +2,8 @@
 # import:
 
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse, Http404
-from django.shortcuts import render, redirect
-from .models import TodoListItem, Category
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import *
 from .forms import *
 
 # ========================================================
@@ -17,7 +17,7 @@ menu = [{'title': "All Tasks", 'url_name': 'home'},
 ]
 
 # ========================================================
-# view pages on navbar:
+# Main Views:
 def todoappView(request):
     all_todo_items = TodoListItem.objects.filter(is_done=0)
     cats = Category.objects.all()
@@ -30,19 +30,24 @@ def todoappView(request):
     }
     return render(request, 'todolist.html', context=context)
 
+# Show whole task:
 def show_post(request, post_id):
-    task = TodoListItem.objects.filter(id=post_id)
+    post = get_object_or_404(TodoListItem,pk=post_id)
     cats = Category.objects.all()
+    cat_current = Category.objects.get(id=post.cat_id)
+    #task = TodoListItem.objects.filter(id=post_id)
+    #cats = Category.objects.all()
     context = {
-    'posts': task,
-    'cats': cats,
+    'post': post,
     'menu': menu,
-    'title': 'Task manager',
-    'cat_selected': 0,
+    'title': post.title,
+    'cat_for_title': cat_current,
+    #'cat_selected': post.cat_id,
     }
     return render(request, 'post.html', context=context)
     #return HttpResponse(f"Отображение статьи с id = {post_id}")
 
+# Show tasks of one category
 def show_category(request, cat_id):
     posts = TodoListItem.objects.filter(cat_id=cat_id)
     cats = Category.objects.all()
