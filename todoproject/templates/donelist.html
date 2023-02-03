@@ -13,7 +13,7 @@
         <hr>
         <h2>{{j.title}}</h2>
         <p>{{j.content}}</p>
-        <form action="/deleteTodoItem/{{j.id}}/" method = "post">{% csrf_token %}
+        <form action="/deleteTodoItem/{{j.slug}}/" method = "post">{% csrf_token %}
             <input type="submit" value="Delete">
         </form>
         <hr>
