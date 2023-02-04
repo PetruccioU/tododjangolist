@@ -1,6 +1,5 @@
 # tododjangolist
 
-Studying Django
 Here is a Django project of my 'Task Manager' website. During this project I've learned the basics of MTV Architecture Components (Model, Template, and View)
 of Django framework, which is a variation of the MVC pattern. I learned how to describe a Model properly, how to make migrations, and how to migrate. I added an admin
 panel. I created Views as functions, and as classes, I added a dynamic slugs to my URLs. 
