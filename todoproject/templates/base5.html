@@ -69,11 +69,13 @@
           {% endif %}
 
           {% for c in cats %}
-	        {% if c.pk == cat_selected %}
-		      <li class="nav-link active">{{c.name}}</li>
-	        {% else %}
-		      <li><a href="{{ c.get_absolute_url }}">{{c.name}}</a></li>
-	        {% endif %}
+            {% if c.todolistitem__count > 0 %}
+	          {% if c.pk == cat_selected %}
+		        <li class="nav-link active">{{c.name}}</li>
+	          {% else %}
+		        <li><a href="{{ c.get_absolute_url }}">{{c.name}}</a></li>
+	          {% endif %}
+            {% endif %}
           {% endfor %}
 
 <!-- pk is for: primary key -->

@@ -1,44 +1,38 @@
 # ========================================================
 # import:
-
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import *
 from .forms import *
-
-# ========================================================
-# menu:
-
-menu = [{'title': "All Tasks", 'url_name': 'home'},
-        {'title': "Done", 'url_name': 'donelist'},
-        {'title': "Add Task", 'url_name': 'add'},
-        {'title': "Motivational Quotes", 'url_name': 'motivation'},
-        {'title': "About Us", 'url_name': 'about'}
-]
+from .utils import *
 
 # ========================================================
 # Main Views:
 
-# View with a standard ListView class
-class todoView(ListView):
+# index page as a standard ListView class
+
+class todoView(DataMixin, ListView):
     model = TodoListItem
     template_name = 'todolist.html'
     context_object_name = 'posts'
     #extra_context = {'title': 'Task manager'}     # only for string of int
+
     def get_context_data(self, *, object_list=None, **kwargs):
-        cats = Category.objects.all()
+        #cats = Category.objects.all()
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = 'Task manager'
-        context['cat_selected'] = 0
-        context['cats'] = cats
-        return context
+        c_def=self.get_user_context(title='Task manager')
+        #context['menu'] = menu
+        #context['cat_selected'] = 0
+        #context['cats'] = cats
+        #context['title'] = 'Task manager'
+        return {**context, **c_def}
 
     def get_queryset(self):
-        return TodoListItem.objects.filter(is_published=1)
+        return TodoListItem.objects.filter(is_published=1, is_done=0)
 #
 #def todoappView(request):
 #    all_todo_items = TodoListItem.objects.filter(is_done=0)
@@ -54,7 +48,7 @@ class todoView(ListView):
 
 
 
-# Show whole task:
+# Show whole task, as a DetailView class:
 class showPost(DetailView):
     model = TodoListItem
     template_name = 'post.html'
@@ -109,7 +103,7 @@ class showcatView(ListView):
         return context
 
     def get_queryset(self):
-        return TodoListItem.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True)
+        return TodoListItem.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True, is_done=False)
 
 ## View of category as function:
 #def show_category(request, cat_slug):
@@ -147,18 +141,25 @@ def DoneList(request):
 
 
 # add form as CreateView class
-class addForm(CreateView):
+class addForm(LoginRequiredMixin, DataMixin,CreateView):
     form_class = AddPostForm
     template_name = 'add.html'
     success_url = reverse_lazy('home')
+    login_url = reverse_lazy('home')
+    raise_exception = True
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        cats = Category.objects.all()
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = 'Add new task'
-        context['cats'] = cats
-        return context
+        c_def=self.get_user_context(title='Add new task')
+        return {**context, **c_def}
+
+    #def get_context_data(self, *, object_list=None, **kwargs):
+    #    cats = Category.objects.all()
+    #    context = super().get_context_data(**kwargs)
+    #    context['menu'] = menu
+    #    context['title'] = 'Add new task'
+    #    context['cats'] = cats
+    #    return context
 
 ## add form as function:
 #def showFormForNewTask(request):
