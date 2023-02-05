@@ -92,7 +92,7 @@ class TodoListItem(models.Model):
     class Meta:
         verbose_name='Task'
         verbose_name_plural ='Tasks'
-        ordering = ['title']
+        ordering = ['id']
 
 
 
