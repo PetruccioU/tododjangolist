@@ -19,6 +19,7 @@ from django.urls import include,path
 from todoapp.views import pageNotFound
 from todoproject import settings
 
+
 #!!!To make import mark 'todoproject' folder as a "Source Root"!!!
 
 urlpatterns = [
@@ -27,6 +28,7 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    urlpatterns = urlpatterns + [ path('__debug__/', include('debug_toolbar.urls')), ]
     urlpatterns += static(settings.MEDIA_URL, document_rood=settings.MEDIA_ROOT)
 
 handler404 = pageNotFound

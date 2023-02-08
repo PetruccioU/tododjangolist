@@ -27,15 +27,16 @@ class TodoView(DataMixin, ListView):
     def get_context_data(self, *, object_list=None, **kwargs):
         #cats = Category.objects.all()
         context = super().get_context_data(**kwargs)
-        c_def=self.get_user_context(title='Task manager')
+        c_def = self.get_user_context(title='Task manager')
+        context['cat_selected'] = 0
         #context['menu'] = menu
-        #context['cat_selected'] = 0
         #context['cats'] = cats
         #context['title'] = 'Task manager'
         return {**context, **c_def}
 
     def get_queryset(self):
-        return TodoListItem.objects.filter(is_published=1, is_done=0)
+        return TodoListItem.objects.filter(is_published=1, is_done=0).select_related('cat')
+        #.select_related(key) query by ForeignKey - prefetch_related(key) by ManyToManyKey
 #
 #def todoappView(request):
 #    all_todo_items = TodoListItem.objects.filter(is_done=0)
@@ -50,25 +51,48 @@ class TodoView(DataMixin, ListView):
 #    return render(request, 'todolist.html', context=context)
 
 
-
-# Show whole task, as a DetailView class:
-class ShowPost(DetailView):
+# ==============================================================================
+# Show whole task, as a Mixin + DetailView class:
+class ShowPost(DataMixin, DetailView):
     model = TodoListItem
     template_name = 'post.html'
     slug_url_kwarg = 'post_slug'
-    #pk_url_kwarg = 'post_pk'
     context_object_name = 'post'
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        post = get_object_or_404(TodoListItem, slug=self.kwargs['post_slug'])
-        cats = Category.objects.all()
-        cat_current = Category.objects.get(id=post.cat_id)
+        #post = get_object_or_404(TodoListItem, slug=self.kwargs['post_slug'])
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = context['post']
-        context['cat_for_title'] = cat_current
-        context['cats'] = cats
-        return context
+        c_def = self.get_user_context()
+        #cat_current = Category.objects.get(id=post.cat_id)
+        #context['cat_for_title'] = post.cat
+        #context['title'] = post.slug
+        #context['post'] = post
+        return {**context, **c_def}
+
+    #def get_object(self, queryset=None):
+    #    return TodoListItem.objects.filter(slug='post_slug')
+    #def get_queryset(self):
+    #    return TodoListItem.objects.filter(slug='post_slug')
+        #.select_related(key) query by ForeignKey - prefetch_related(key) by ManyToManyKey
+
+# Show whole task, as a DetailView class:
+#class ShowPost(DetailView):
+#    model = TodoListItem
+#    template_name = 'post.html'
+#    slug_url_kwarg = 'post_slug'
+#    #pk_url_kwarg = 'post_pk'
+#    context_object_name = 'post'
+#
+#    def get_context_data(self, *, object_list=None, **kwargs):
+#        post = get_object_or_404(TodoListItem, slug=self.kwargs['post_slug'])
+#        cats = Category.objects.all()
+#        cat_current = Category.objects.get(id=post.cat_id)
+#        context = super().get_context_data(**kwargs)
+#        context['menu'] = menu
+#        context['title'] = post.slug
+#        context['cat_for_title'] = cat_current
+#        context['cats'] = cats
+#        return context
 
 #def show_post(request, post_slug):
 #    post = get_object_or_404(TodoListItem,slug=post_slug)
@@ -85,7 +109,7 @@ class ShowPost(DetailView):
 #    return render(request, 'post.html', context=context)
 #    #return HttpResponse(f"Отображение статьи с id = {post_id}")
 
-
+#========================================================================
 # Show tasks by categories:
 # Show tasks with Mixin:
 class ShowCatView(DataMixin,ListView):
@@ -94,13 +118,17 @@ class ShowCatView(DataMixin,ListView):
     context_object_name = 'posts'
     allow_empty = False
 
+    def get_queryset(self):
+        return TodoListItem.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True, is_done=False).select_related('cat')
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        c_def=self.get_user_context(title='Category - ' + str(context['posts'][0].cat))
+        catid = Category.objects.get(slug=self.kwargs['cat_slug'])
+        context['cat_selected'] = catid.id
+        context['cat_selected_name'] = catid.name
+        c_def = self.get_user_context(title='Category - ' + str(catid.name))    #(title='Category - ' + str(catid.cat), cat_selected = catid.pk)
         return {**context, **c_def}
 
-    def get_queryset(self):
-        return TodoListItem.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True, is_done=False)
 
 ## View with a standard ListView class
 #class showcatView(ListView):
@@ -141,6 +169,7 @@ class ShowCatView(DataMixin,ListView):
 #    }
 #    return render(request, 'todolist.html', context=context)
 
+# ==============================================================================
 
 # Done list as class with DataMixin and ViewList
 class DoneList(DataMixin, ListView):

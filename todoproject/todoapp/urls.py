@@ -1,12 +1,15 @@
 from django.contrib import admin
-from django.urls import path, re_path
+from django.urls import path, re_path, include
 from .views import *
+from django.views.decorators.cache import cache_page
 
 urlpatterns = [
 
     path('', TodoView.as_view(), name='home'),  # todoView.as_view() - call of function only
+    #path('', cache_page(60)(TodoView.as_view()), name='home')   #from django.views.decorators.cache import cache_page
     path('donelist/', DoneList.as_view(), name='donelist'),
     path('add/', AddForm.as_view(), name='add'),
+
 
     path('motivation/', MotivationForm.as_view(), name='motivation'),
     path('about/', AboutForm.as_view(), name='about'),

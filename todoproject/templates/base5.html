@@ -63,13 +63,16 @@
 <!-- Navbar End -->
 
 <!-- Left Sidebar And block-content -->
+{% load cache %}
+
 <div class="container mt-5">
   <div class="row">
 
     <div class="col-sm-4">
       <div class="fixed">
         <ul class="nav nav-pills flex-column">
-          {% if cat_selected == 0 %}
+          <!--{% cache 60 sidebar %}
+          {% if cat_selected == 0 %}-->
 		    <li class="selected"><h4>All Categories:</h4></li>
           {% else %}
 		    <li><a href="{% url 'home' %}"><h4>Back To All Categories</h4></a></li>
@@ -82,9 +85,10 @@
 	          {% else %}
 		        <li><a href="{{ c.get_absolute_url }}">{{c.name}}</a></li>
 	          {% endif %}
+            {% else %}
             {% endif %}
           {% endfor %}
-
+          <!--{% endcache %} -->
 <!-- pk is for: primary key -->
         </ul>
         <hr class="d-sm-none">
@@ -96,6 +100,8 @@
     </div>
   </div>
 </div>
+
+
 <!-- Left Sidebar And blockcontent END -->
 
 
