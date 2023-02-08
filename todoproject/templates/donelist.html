@@ -20,4 +20,29 @@
     </li>
     {% endfor %}
     </ul>
+
+<!-- Pagination:   -->
+{% if page_obj.has_other_pages %}
+<nav class="text-center">
+  <ul>
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+    {% endif %}
+    {% for p in paginator.page_range %}
+      {% if page_obj.number == p %}
+      |{{ p }}|
+      {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+      <a href="?page={{ p }}">|{{ p }}|</a>
+      {% endif %}
+    {% endfor %}
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">&gt;</a>
+    {% endif %}
+  </ul>
+</nav>
+{% else %}
+{% endif %}
+<!-- Pagination END:  -->
+
+
 {% endblock %}

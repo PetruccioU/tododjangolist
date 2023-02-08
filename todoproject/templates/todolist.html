@@ -39,25 +39,27 @@
 	{% endfor %}
 </ul>
 
-<!--<ul>
-{% for i in posts %}
-<li>
-  <div class="block" style="padding-top: 10px;">
-    <h4>{{i.title}}</h4>
-    <p>{{i.content}}</p>
-    <hr>
-      <form style="float:right;" action="/deleteTodoItem/{{i.id}}/" method = "post">{% csrf_token %}
-          <input type="submit" value="Delete">
-      </form>
-      <form style="float:right;" action="/YourTodoDone/{{i.id}}/" method = "post">{% csrf_token %}
-          <input type="submit" value="Done">
-      </form>
-    <p>Change status of task:</p>
-    <hr>
-  </div>
-</li>
+<!-- Pagination:   -->
+{% if page_obj.has_other_pages %}
+<nav class="text-center">
+  <ul>
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}">&lt;</a>
+    {% endif %}
+    {% for p in paginator.page_range %}
+      {% if page_obj.number == p %}
+      |{{ p }}|
+      {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+      <a href="?page={{ p }}">|{{ p }}|</a>
+      {% endif %}
     {% endfor %}
-</ul>-->
-
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}">&gt;</a>
+    {% endif %}
+  </ul>
+</nav>
+{% else %}
+{% endif %}
+<!-- Pagination END:  -->
 
 {% endblock %}

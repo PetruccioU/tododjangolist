@@ -1,5 +1,8 @@
 # ========================================================
 # import:
+from django.contrib.auth import logout, login
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.views import LoginView
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView
@@ -15,7 +18,7 @@ from .utils import *
 
 # index page as a standard ListView class
 
-class todoView(DataMixin, ListView):
+class TodoView(DataMixin, ListView):
     model = TodoListItem
     template_name = 'todolist.html'
     context_object_name = 'posts'
@@ -49,7 +52,7 @@ class todoView(DataMixin, ListView):
 
 
 # Show whole task, as a DetailView class:
-class showPost(DetailView):
+class ShowPost(DetailView):
     model = TodoListItem
     template_name = 'post.html'
     slug_url_kwarg = 'post_slug'
@@ -83,27 +86,42 @@ class showPost(DetailView):
 #    #return HttpResponse(f"Отображение статьи с id = {post_id}")
 
 
-# Show tasks of one category
-
-# View with a standard ListView class
-class showcatView(ListView):
+# Show tasks by categories:
+# Show tasks with Mixin:
+class ShowCatView(DataMixin,ListView):
     model = TodoListItem
     template_name = 'todolist.html'
     context_object_name = 'posts'
     allow_empty = False
-    # extra_context = {'title': 'Task manager'}     # only for string of int
+
     def get_context_data(self, *, object_list=None, **kwargs):
-        cats = Category.objects.all()
-        catid = Category.objects.get(slug=self.kwargs['cat_slug'])
         context = super().get_context_data(**kwargs)
-        context['menu'] = menu
-        context['title'] = 'Category - ' + str(context['posts'][0].cat)
-        context['cat_selected'] = catid.name
-        context['cats'] = cats
-        return context
+        c_def=self.get_user_context(title='Category - ' + str(context['posts'][0].cat))
+        return {**context, **c_def}
 
     def get_queryset(self):
         return TodoListItem.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True, is_done=False)
+
+## View with a standard ListView class
+#class showcatView(ListView):
+#    model = TodoListItem
+#    template_name = 'todolist.html'
+#    context_object_name = 'posts'
+#    allow_empty = False
+#    # extra_context = {'title': 'Task manager'}     # only for string of int
+#
+#    def get_context_data(self, *, object_list=None, **kwargs):
+#        cats = Category.objects.all()
+#        catid = Category.objects.get(slug=self.kwargs['cat_slug'])
+#        context = super().get_context_data(**kwargs)
+#        context['menu'] = menu
+#        context['title'] = 'Category - ' + str(context['posts'][0].cat)
+#        context['cat_selected'] = catid.name
+#        context['cats'] = cats
+#        return context
+#
+#    def get_queryset(self):
+#        return TodoListItem.objects.filter(cat__slug=self.kwargs['cat_slug'], is_published=True, is_done=False)
 
 ## View of category as function:
 #def show_category(request, cat_slug):
@@ -124,28 +142,45 @@ class showcatView(ListView):
 #    return render(request, 'todolist.html', context=context)
 
 
-# done lists as function:
-def DoneList(request):
-    all_done_items = TodoListItem.objects.filter(is_done=1)
-    cats = Category.objects.all()
-    if len(all_done_items) == 0:
-        raise Http404()
-    context = {
-        'posts': all_done_items,
-        'cats': cats,
-        'title': 'Task manager',
-        'menu': menu,
-    }
-    return render(request, 'donelist.html',
-    context=context)
+# Done list as class with DataMixin and ViewList
+class DoneList(DataMixin, ListView):
+    model = TodoListItem
+    template_name = 'donelist.html'
+    context_object_name = 'posts'
+    success_url = reverse_lazy('about')
+    login_url = reverse_lazy('about')
+    raise_exception = True
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def=self.get_user_context(title='Task manager')
+        return {**context, **c_def}
+
+    def get_queryset(self):
+        return TodoListItem.objects.filter(is_published=1, is_done=1)
+
+## DoneList as function:
+#def DoneList(request):
+#    all_done_items = TodoListItem.objects.filter(is_done=1)
+#    cats = Category.objects.all()
+#    if len(all_done_items) == 0:
+#        raise Http404()
+#    context = {
+#        'posts': all_done_items,
+#        'cats': cats,
+#        'title': 'Task manager',
+#        'menu': menu,
+#    }
+#    return render(request, 'donelist.html',
+#    context=context)
 
 
 # add form as CreateView class
-class addForm(LoginRequiredMixin, DataMixin,CreateView):
+class AddForm(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = 'add.html'
-    success_url = reverse_lazy('home')
-    login_url = reverse_lazy('home')
+    success_url = reverse_lazy('about')
+    login_url = reverse_lazy('about')
     raise_exception = True
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -186,53 +221,104 @@ class addForm(LoginRequiredMixin, DataMixin,CreateView):
     #new_item.save()
     #return redirect('home', permanent = True)
 
+#===================================================================
+# Register and Login
 
 
+class RegisterUser(DataMixin,CreateView):
+    form_class = RegisterUserForm
+    template_name = 'register.html'
+    success_url = reverse_lazy('login')
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def=self.get_user_context(title='Registration')
+        return {**context, **c_def}
+
+    def form_valid(self, form):
+        user=form.save()
+        login(self.request, user)
+        return redirect('home')
+
+
+class LogUser(DataMixin, LoginView):
+    form_class = LoginUserForm
+    template_name = 'login.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def=self.get_user_context(title='Login')
+        return {**context, **c_def}
+
+    def get_success_url(self):
+            return reverse_lazy('home')
+
+    def logout_user(request):
+        logout(request)
+        return redirect('login')
 
 
 #==================================================
-# Static views
-def AboutForm(request):
-    context = {
-        'title': 'Task manager',
-        'menu': menu,
-    }
-    return render(request, 'about.html', context=context)
+# Static views:
+class AboutForm(DataMixin, ListView):
+    template_name = 'about.html'
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def=self.get_user_context(title='About Us')
+        return {**context, **c_def}
 
-def MotivationForm(request):
-    context = {
-        'title': 'Task manager',
-        'menu': menu,
-    }
-    return render(request, 'motivational.html',context=context)
+    def get_queryset(self):
+        return TodoListItem.objects.all()
 
+class MotivationForm(DataMixin, ListView):
+    template_name = 'motivational.html'
 
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def=self.get_user_context(title='About Us')
+        return {**context, **c_def}  # adding one dictionary to another
 
+    def get_queryset(self):
+        return TodoListItem.objects.all()
+
+#def about_form(request):
+#    context = {
+#        'title': 'Task manager',
+#        'menu': menu,
+#    }
+#    return render(request, 'about.html', context=context)
+#
+#def motivation_form(request):
+#    context = {
+#        'title': 'Task manager',
+#        'menu': menu,
+#    }
+#    return render(request, 'motivational.html',context=context)
 
 # ========================================================
 # functional buttons: slug:post_slug
-def deleteTodoView(request, post_slug):
-    y = TodoListItem.objects.get(slug=post_slug)
-    y.delete()
-    return redirect('home',permanent = True)
-
-def getYourTodoDone(request, post_slug):
-    y = TodoListItem.objects.get(slug=post_slug)
-    y.is_done=1
-    y.save(update_fields=["is_done"])
-    return redirect('home', permanent=True)
+def delete_todo_view(request, post_slug):
+    if request.user.is_authenticated:
+        y = TodoListItem.objects.get(slug=post_slug)
+        y.delete()
+        return redirect('home',permanent = True)
+    else:
+        return redirect('home', permanent=True)
 
 
-# ========================================================
-# pages as Categories on the Left Sidebar:
-
-##########################################################
+def get_your_todo_done(request, post_slug):
+    if request.user.is_authenticated:
+        y = TodoListItem.objects.get(slug=post_slug)
+        y.is_done=1
+        y.save(update_fields=["is_done"])
+        return redirect('home', permanent=True)
+    else:
+        return redirect('home', permanent=True)
 
 # ========================================================
 # Exeption 404, and archive:
 
-def pageNotFond(request,exception):
+def pageNotFound(request,exception):
     return HttpResponseNotFound('<h1> Sorry, there is no such page on the website</h1>')
 
 def archive(request,year):

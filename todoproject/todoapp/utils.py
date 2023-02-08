@@ -15,6 +15,7 @@ menu = [{'title': "All Tasks", 'url_name': 'home'},
 
 # ===========================================================
 
+
 class DataMixin:
     paginate_by = 3
     def get_user_context(self, **kwargs):
@@ -23,7 +24,15 @@ class DataMixin:
         user_menu = menu.copy()
         if not self.request.user.is_authenticated:
             user_menu.pop(2)
-
+            context['auth'] = False
+        else:
+            context['auth'] = True
+        #        cats = Category.objects.all()
+        #catid = Category.objects.get(slug=self.kwargs['cat_slug'])
+        #        context = super().get_context_data(**kwargs)
+        #        context['menu'] = menu
+        #        context['title'] = 'Category - ' + str(context['posts'][0].cat)
+        #context['cat_selected'] = catid.name
         context['menu'] = user_menu
         context['cats'] = cats
         if 'cat_selected' not in context:

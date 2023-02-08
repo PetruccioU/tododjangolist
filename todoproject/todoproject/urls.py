@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include,path
-from todoapp.views import pageNotFond
+from todoapp.views import pageNotFound
 from todoproject import settings
 
 #!!!To make import mark 'todoproject' folder as a "Source Root"!!!
@@ -29,7 +29,7 @@ urlpatterns = [
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_rood=settings.MEDIA_ROOT)
 
-handler404 = pageNotFond
+handler404 = pageNotFound
 #handler 500 server error, 404 access denied, 400 impossible to handle the request
 
 

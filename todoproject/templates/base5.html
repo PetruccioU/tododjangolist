@@ -47,10 +47,17 @@
       <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
     </form>
 
+    {% if auth %}
+    <div class="text-white">{{ user.username }} |</div>
+    <form style="float:right;" action="/logout_user/" method = "post">{% csrf_token %}
+          <input type="submit" value="Log-out">
+      </form>
+    {% else %}
     <div class="text-end">
-      <button type="button" class="btn btn-success">Login</button>
-      <button type="button" class="btn btn-warning">Sign-up</button>
+      <a href="{% url 'register' %}" class="btn btn-warning">Sign-up</a>
+      <a href="{% url 'login' %}" class="btn btn-success">Login</a>
     </div>
+    {% endif %}
   </div>
 </nav>
 <!-- Navbar End -->
@@ -79,7 +86,7 @@
           {% endfor %}
 
 <!-- pk is for: primary key -->
-
+        </ul>
         <hr class="d-sm-none">
       </div>
     </div>
@@ -91,28 +98,6 @@
 </div>
 <!-- Left Sidebar And blockcontent END -->
 
-<!-- Pogination:   -->
-{% if page_obj.has_other_pages %}
-<nav class="text-center">
-  <ul>
-    {% if page_obj.has_previous %}
-    <a href="?page={{ page_obj.previous_page_number }}">&lt;</a>
-    {% endif %}
-    {% for p in paginator.page_range %}
-      {% if page_obj.number == p %}
-      |{{ p }}|
-      {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
-      <a href="?page={{ p }}">|{{ p }}|</a>
-      {% endif %}
-    {% endfor %}
-    {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}">&gt;</a>
-    {% endif %}
-  </ul>
-</nav>
-{% else %}
-{% endif %}
-<!-- Pogination END:  -->
 
 <!-- Footer: -->
 <div class="container-fluid mt-5 p-4 bg-dark text-white">
