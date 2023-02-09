@@ -1,0 +1,13 @@
+#header, #changelist-filter.h2 {
+    background: #444444;
+}
+
+
+
+.module caption, .breadcrumbs {
+    background: #444444;
+
+}
+div.breadcrumbs {
+    background: #999999;
+}
