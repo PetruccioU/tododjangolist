@@ -5,7 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, FormView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -208,8 +208,8 @@ class DoneList(DataMixin, ListView):
 class AddForm(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     template_name = 'add.html'
-    success_url = reverse_lazy('about')
-    login_url = reverse_lazy('about')
+    success_url = reverse_lazy('home')
+    login_url = reverse_lazy('home')
     raise_exception = True
 
     def get_context_data(self, *, object_list=None, **kwargs):
@@ -250,6 +250,8 @@ class AddForm(LoginRequiredMixin, DataMixin, CreateView):
     #new_item.save()
     #return redirect('home', permanent = True)
 
+
+
 #===================================================================
 # Register and Login
 
@@ -285,6 +287,29 @@ class LogUser(DataMixin, LoginView):
     def logout_user(request):
         logout(request)
         return redirect('login')
+
+#=====================================================
+#  Feedback view
+
+
+class FeedbackView(DataMixin, FormView):
+    form_class = ContactForm
+    template_name = 'feedback.html'
+    success_url = reverse_lazy('home')
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def=self.get_user_context(title='Please give a feedback about us:')
+        return {**context, **c_def}
+
+    def form_valid(self, form):
+        #user=form.save()
+        print(form.cleaned_data)
+        #login(self.request, user)
+        return redirect('home')
+
+
+
 
 
 #==================================================

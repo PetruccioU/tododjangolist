@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'todoapp',
     "debug_toolbar",
+    'captcha',
 ]
 
 MIDDLEWARE = [

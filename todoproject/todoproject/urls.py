@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include,path
+from django.urls import include, path
 from todoapp.views import pageNotFound
 from todoproject import settings
 
@@ -25,11 +25,13 @@ from todoproject import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('todoapp.urls')),
+    path('captcha/', include('captcha.urls'))
 ]
 
 if settings.DEBUG:
+    #import debug_toolbar
     urlpatterns = urlpatterns + [ path('__debug__/', include('debug_toolbar.urls')), ]
-    urlpatterns += static(settings.MEDIA_URL, document_rood=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = pageNotFound
 #handler 500 server error, 404 access denied, 400 impossible to handle the request

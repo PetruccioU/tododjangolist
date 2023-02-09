@@ -10,7 +10,6 @@ urlpatterns = [
     path('donelist/', DoneList.as_view(), name='donelist'),
     path('add/', AddForm.as_view(), name='add'),
 
-
     path('motivation/', MotivationForm.as_view(), name='motivation'),
     path('about/', AboutForm.as_view(), name='about'),
 
@@ -25,6 +24,8 @@ urlpatterns = [
     path('register/', RegisterUser.as_view(), name='register'),
     path('login/', LogUser.as_view(), name='login'),
     path('logout_user/', LogUser.logout_user),
+
+    path('feedback/', FeedbackView.as_view(), name='feedback')
 ]
 
 #path('post/<int:post_id>/', show_post, name='post'),

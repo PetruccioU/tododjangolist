@@ -22,10 +22,11 @@ class DataMixin:
     paginate_by = 3
     def get_user_context(self, **kwargs):
         context = kwargs
-        cats = cache.get('cats')
-        if not cats:
-            cats = Category.objects.annotate(Count('todolistitem'))
-            cache.set('cats', cats, 60)
+        cats = Category.objects.annotate(Count('todolistitem'))
+        #cats = cache.get('cats')
+        #if not cats:
+        #    cats = Category.objects.annotate(Count('todolistitem'))
+        #    cache.set('cats', cats, 60)
         user_menu = menu.copy()
         if not self.request.user.is_authenticated:
             user_menu.pop(2)
