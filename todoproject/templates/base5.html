@@ -43,9 +43,10 @@
 	    {% endif %}
       {% endfor %}
     </ul>
-    <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-      <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
-    </form>
+      <form action="{% url 'search' %}" method="get">{% csrf_token %}
+        <input name="q" type="text" placeholder="Search by task title...">
+        <input type="submit" value="Find">
+      </form>
 
     {% if auth %}
     <div class="text-white">{{ user.username }} |</div>

@@ -5,14 +5,16 @@
 {% endblock %}
 
 {% block content %}
-<hr>
+
 <h1>Great job, you have finished these tasks:</h1>
+    <br>
     <ul>
     {% for j in posts %}
     <li>
-        <hr>
+
         <h2>{{j.title}}</h2>
         <p>{{j.content}}</p>
+        <hr>
         <form action="/deleteTodoItem/{{j.slug}}/" method = "post">{% csrf_token %}
             <input type="submit" value="Delete">
         </form>

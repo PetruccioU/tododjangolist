@@ -3,6 +3,7 @@
 from django.contrib.auth import logout, login
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.views import LoginView
+from django.db.models import Q
 from django.http import HttpResponseRedirect, HttpResponseNotFound, HttpResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, FormView
@@ -311,8 +312,27 @@ class FeedbackView(DataMixin, FormView):
 
 
 
+#=====================================================
+# Search:
 
-#==================================================
+class SearchResultsView(DataMixin, ListView):
+    model = TodoListItem
+    template_name = 'search.html'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def=self.get_user_context(title='Search')
+        return {**context, **c_def}
+
+    def get_queryset(self): # новый
+        query = self.request.GET.get('q')
+        object_list = TodoListItem.objects.filter(
+            Q(title__icontains=query) #| Q(state__icontains=query)
+        )
+        return object_list
+
+
+#======================================================
 # Static views:
 class AboutForm(DataMixin, ListView):
     template_name = 'about.html'
@@ -329,7 +349,7 @@ class MotivationForm(DataMixin, ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
-        c_def=self.get_user_context(title='About Us')
+        c_def=self.get_user_context(title='Get motivated')
         return {**context, **c_def}  # adding one dictionary to another
 
     def get_queryset(self):
@@ -387,4 +407,15 @@ def archive(request,year):
 #
 #    return HttpResponse(f"<h1>Task by title</h1><p>{ catid }<p1>")
 
+from django.views.generic.edit import UpdateView
+
+class PostUpdateView(UpdateView, DataMixin):
+    model = TodoListItem
+    fields = ['content']
+    template_name_suffix = '_update_form'
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        c_def=self.get_user_context(title='Update task')
+        return {**context, **c_def}
 

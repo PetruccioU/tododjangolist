@@ -25,7 +25,11 @@ urlpatterns = [
     path('login/', LogUser.as_view(), name='login'),
     path('logout_user/', LogUser.logout_user),
 
-    path('feedback/', FeedbackView.as_view(), name='feedback')
+    path('feedback/', FeedbackView.as_view(), name='feedback'),
+
+    path('search/', SearchResultsView.as_view(), name='search'),
+
+
 ]
 
 #path('post/<int:post_id>/', show_post, name='post'),

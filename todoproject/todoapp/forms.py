@@ -42,6 +42,10 @@ class AddPostForm(forms.ModelForm):
 #    cat = forms.ModelChoiceField(queryset=Category.objects.all(), label='Category', empty_label='No category')
 
 
+
+
+
+
 class RegisterUserForm(UserCreationForm):
     username = forms.CharField(label='Print your username', widget=forms.TextInput(attrs={'class': 'form-input'}))
     email = forms.EmailField(label='Email', widget=forms.EmailInput(attrs={'class': 'form-input'}))

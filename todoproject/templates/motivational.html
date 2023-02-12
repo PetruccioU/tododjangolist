@@ -6,9 +6,14 @@
 
 {% block content %}
 
-  <hr>
-        <h2>Quote of the day:</h2>
-        <hr>
-        <h3>“We cannot solve problems with the kind of thinking we employed when we came up with them.” — Albert Einstein</h3>
-        <hr>
+        <h2>Enjoy the quote:</h2>
+        <br>
+        <h3>“{{ quote_of_day }}” — {{ originator_name }}</h3>
+
+<br>
+<a href="{% url 'motivation' %}" class="btn btn-primary" type="button">Get another quote</a>
+<br>
+<br>
+<br>
+
 {% endblock %}
