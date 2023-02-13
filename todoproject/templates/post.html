@@ -22,6 +22,9 @@
   <h2>{{post.title}}</h2>
   {{post.content|linebreaks}}
   <hr>
+  <form style="float:right;" action="{% url 'update' post.slug %}">
+          <input type="submit" value="Update">
+  </form>
   <form style="float:right;" action="/deleteTodoItem/{{i.id}}/" method = "post">{% csrf_token %}
     <input type="submit" value="Delete">
   </form>

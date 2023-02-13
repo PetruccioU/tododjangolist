@@ -29,10 +29,13 @@ urlpatterns = [
 
     path('search/', SearchResultsView.as_view(), name='search'),
 
+    re_path(r'^post/(?P<slug>[\w-]+)/update_form', PostUpdateView.as_view(), name='update'),
 
 ]
 
 #path('post/<int:post_id>/', show_post, name='post'),
 #path('category/<int:cat_id>/', show_category, name='category'),
 
+#path('post/<slug:post_slug>/update_form/', PostUpdateView.as_view(), name='update'),
 
+# path('post/(?P<post_slug>[-a-zA-Z0-9_]+)/update_form/\\Z', PostUpdateView.as_view(), name='

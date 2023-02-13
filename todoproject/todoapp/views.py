@@ -9,21 +9,19 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic import ListView, DetailView, CreateView, FormView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-
 from .models import *
 from .forms import *
 from .utils import *
+from django.views.generic.edit import UpdateView
+
 
 # ========================================================
-# Main Views:
-
-# index page as a standard ListView class
-
+# List of tasks as a standard ListView and Mixin
 class TodoView(DataMixin, ListView):
     model = TodoListItem
     template_name = 'todolist.html'
     context_object_name = 'posts'
-    #extra_context = {'title': 'Task manager'}     # only for string of int
+    #extra_context = {'title': 'Task manager'}     # only for str of int
 
     def get_context_data(self, *, object_list=None, **kwargs):
         #cats = Category.objects.all()
@@ -38,6 +36,9 @@ class TodoView(DataMixin, ListView):
     def get_queryset(self):
         return TodoListItem.objects.filter(is_published=1, is_done=0).select_related('cat')
         #.select_related(key) query by ForeignKey - prefetch_related(key) by ManyToManyKey
+
+
+# List of tasks as function
 #
 #def todoappView(request):
 #    all_todo_items = TodoListItem.objects.filter(is_done=0)
@@ -110,10 +111,11 @@ class ShowPost(DataMixin, DetailView):
 #    return render(request, 'post.html', context=context)
 #    #return HttpResponse(f"Отображение статьи с id = {post_id}")
 
+
 #========================================================================
-# Show tasks by categories:
+# Show tasks by categories with Mixin and ListView:
 # Show tasks with Mixin:
-class ShowCatView(DataMixin,ListView):
+class ShowCatView(DataMixin, ListView):
     model = TodoListItem
     template_name = 'todolist.html'
     context_object_name = 'posts'
@@ -170,8 +172,8 @@ class ShowCatView(DataMixin,ListView):
 #    }
 #    return render(request, 'todolist.html', context=context)
 
-# ==============================================================================
 
+# ==============================================================================
 # Done list as class with DataMixin and ViewList
 class DoneList(DataMixin, ListView):
     model = TodoListItem
@@ -205,6 +207,7 @@ class DoneList(DataMixin, ListView):
 #    context=context)
 
 
+# ==============================================================================
 # add form as CreateView class
 class AddForm(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
@@ -252,11 +255,35 @@ class AddForm(LoginRequiredMixin, DataMixin, CreateView):
     #return redirect('home', permanent = True)
 
 
+# ========================================================
+# Update Task:
+class PostUpdateView(DataMixin, UpdateView):
+    model = TodoListItem
+    form_class = AddPostForm
+    success_message = "Facture mise à jour avec succes"
+    template_name = 'update_form.html'
+    template_name_suffix = 'update_form'
 
-#===================================================================
+    def get_queryset(self):
+        return TodoListItem.objects.filter(slug=self.kwargs['slug'])
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        catid = TodoListItem.objects.get(slug=self.kwargs['slug'])
+        context['post'] = catid
+        c_def=self.get_user_context(title='Update task')
+        return {**context, **c_def}
+
+    #def get_absolute_url(self):
+    #def get_object(self, queryset=None):
+    #    return TodoListItem.objects.get(slug=self.kwargs("post_slug"))
+
+    #def get_success_url(self):
+    #    return reverse_lazy('update', kwargs={'post_slug': self.get_object().id})
+
+
+# ===================================================================
 # Register and Login
-
-
 class RegisterUser(DataMixin,CreateView):
     form_class = RegisterUserForm
     template_name = 'register.html'
@@ -310,10 +337,9 @@ class FeedbackView(DataMixin, FormView):
         return redirect('home')
 
 
-
-
 #=====================================================
 # Search:
+
 
 class SearchResultsView(DataMixin, ListView):
     model = TodoListItem
@@ -336,6 +362,7 @@ class SearchResultsView(DataMixin, ListView):
 # Static views:
 class AboutForm(DataMixin, ListView):
     template_name = 'about.html'
+
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
         c_def=self.get_user_context(title='About Us')
@@ -343,6 +370,7 @@ class AboutForm(DataMixin, ListView):
 
     def get_queryset(self):
         return TodoListItem.objects.all()
+
 
 class MotivationForm(DataMixin, ListView):
     template_name = 'motivational.html'
@@ -369,8 +397,10 @@ class MotivationForm(DataMixin, ListView):
 #    }
 #    return render(request, 'motivational.html',context=context)
 
+
 # ========================================================
 # functional buttons: slug:post_slug
+
 def delete_todo_view(request, post_slug):
     if request.user.is_authenticated:
         y = TodoListItem.objects.get(slug=post_slug)
@@ -389,8 +419,10 @@ def get_your_todo_done(request, post_slug):
     else:
         return redirect('home', permanent=True)
 
+
 # ========================================================
 # Exeption 404, and archive:
+
 
 def pageNotFound(request,exception):
     return HttpResponseNotFound('<h1> Sorry, there is no such page on the website</h1>')
@@ -407,15 +439,4 @@ def archive(request,year):
 #
 #    return HttpResponse(f"<h1>Task by title</h1><p>{ catid }<p1>")
 
-from django.views.generic.edit import UpdateView
-
-class PostUpdateView(UpdateView, DataMixin):
-    model = TodoListItem
-    fields = ['content']
-    template_name_suffix = '_update_form'
-
-    def get_context_data(self, *, object_list=None, **kwargs):
-        context = super().get_context_data(**kwargs)
-        c_def=self.get_user_context(title='Update task')
-        return {**context, **c_def}
 

@@ -14,10 +14,11 @@
 <ul class="list-articles">
 	{% for p in posts %} <!--instead of 'posts' we could have used 'object_list', if we use the ListView object in views.py-->
 			<li><div class="article-panel">
-	<p class="first">Category: {{p.cat}}</p>
+	<h2 class="first">{{p.title}}</h2>
+                <br>
 	<p class="last">Date: {{p.update_date|date:"d-m-Y H:i:s"}}</p>
 </div>
-	<h2>{{p.title}}</h2>
+	<p>Category: {{p.cat}}</p>
 	{% if p.photo %}
 	<p><img class="img-article-left thumb" src="{{p.photo.url}}"></p>
     {% endif %}
@@ -28,14 +29,19 @@
 			<p class="link-read-post"><a href="{{ p.get_absolute_url }}">Read More</a></p>
 			</li>
 	<hr>
+      <!--<a href="{% url 'update' p.slug %}" class="btn btn-success">Update</a>-->
+      <form style="float:right;" action="{% url 'update' p.slug %}">
+          <input type="submit" value="Update">
+      </form>
       <form style="float:right;" action="/deleteTodoItem/{{p.slug}}/" method = "post">{% csrf_token %}
           <input type="submit" value="Delete">
       </form>
       <form style="float:right;" action="/YourTodoDone/{{p.slug}}/" method = "post">{% csrf_token %}
           <input type="submit" value="Done">
       </form>
-    <p>Change status of task:</p>
+    <p>Edit task:</p>
     <hr>
+    <br>
 	{% endfor %}
 </ul>
 

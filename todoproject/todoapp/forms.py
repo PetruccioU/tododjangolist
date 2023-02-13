@@ -3,32 +3,42 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from captcha.fields import CaptchaField
-
 from .models import *
 
 
 # Form bound with the Model
-
 class AddPostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['cat'].empty_label = 'Category is not selected'
+        #self.fields['slug'].empty_label = ('title',)  #('title',)
         self.fields['photo'].required = False
 
     class Meta:
         model = TodoListItem
-        fields = ['title', 'slug', 'content', 'photo', 'is_done', 'is_published',
+        #prepopulated_fields = {'slug': ('title',)}
+        fields = ['title', 'slug', 'content', 'photo', 'is_published',
                   'cat']  # if (fields = '__all__') The Form will show all fields, except ones that are filled automatically
         widgets = {
-            'title': forms.TextInput(attrs={'class': 'form-input'}),
-            'slug': forms.TextInput(attrs={'class': 'form-input'}),
-            'content': forms.Textarea(attrs={'cols': 60, 'rows': 10}),
+            'title': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Name your task...'
+            }),
+            'slug': forms.TextInput(attrs={
+                'class': 'form-input',
+                'placeholder': 'Print a slag here...'
+            }),
+            'content': forms.Textarea(attrs={
+                'cols': 60,
+                'rows': 10,
+                'placeholder': 'Describe the task here...'
+            }),
         }
 
     def clean_title(self):
         title = self.cleaned_data['title']
         if len(title) > 30:
-            raise ValidationError('Title length is over 30 symbols!')
+            raise ValidationError('Title length is longer then 30 symbols!')
 
         return title
 
@@ -40,10 +50,6 @@ class AddPostForm(forms.ModelForm):
 #    content = forms.CharField(widget=forms.Textarea(attrs={'cols': 60, 'rows': 10}))
 #    is_published = forms.BooleanField(label= 'Publish now', initial=True)
 #    cat = forms.ModelChoiceField(queryset=Category.objects.all(), label='Category', empty_label='No category')
-
-
-
-
 
 
 class RegisterUserForm(UserCreationForm):
@@ -64,9 +70,18 @@ class LoginUserForm(AuthenticationForm):
 
 
 class ContactForm(forms.Form):
-    name = forms.CharField(label='Name', max_length=55)
-    email = forms.EmailField(label='Email')
-    content = forms.CharField(widget=forms.Textarea(attrs={'cols': 60, 'rows': 10}))
+    name = forms.CharField(widget=forms.TextInput(
+        attrs={
+            'placeholder': 'Text your feedback here...'
+        }),
+        max_length=55
+    )
+    email = forms.EmailField(widget=forms.TextInput(
+        attrs={
+            'placeholder': 'Text your email here...'
+        }),
+    )
+    content = forms.CharField(widget=forms.Textarea(attrs={'cols': 60, 'rows': 10, 'placeholder': 'Text your feedback here...'}))
     captcha = CaptchaField()
 
 
